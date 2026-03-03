@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign Up | InsightFlow</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lobster&display=swap"
+    rel="stylesheet">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="auth.css">
+</head>
+
+<body>
+  <div class="split-page-wrapper">
+    <div class="split-card">
+
+      <!-- Left Side -->
+      <div class="split-left" style="background-image: url('images/split_bg_abstract.png');">
+        <div class="left-overlay"></div>
+
+        <a href="intro.html" class="split-logo"
+          style="text-decoration: none; color: white; font-family: 'Orbitron', var(--font-display, sans-serif); font-size: 36px; font-weight: 800; display: flex; align-items: center; gap: 12px; filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.5));">
+          <svg width="48" height="48" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"
+            style="filter: drop-shadow(0 0 12px rgba(186, 150, 255, 0.6));">
+            <circle cx="20" cy="20" r="16" stroke="url(#g1_signup)" stroke-width="2" stroke-dasharray="15 10 5"
+              stroke-linecap="round" transform="rotate(0 20 20)">
+              <animateTransform attributeName="transform" type="rotate" from="0 20 20" to="360 20 20" dur="12s"
+                repeatCount="indefinite" />
+            </circle>
+            <circle cx="20" cy="20" r="12" stroke="url(#g2_signup)" stroke-width="2" stroke-dasharray="10 5"
+              stroke-linecap="round" transform="rotate(0 20 20)">
+              <animateTransform attributeName="transform" type="rotate" from="360 20 20" to="0 20 20" dur="8s"
+                repeatCount="indefinite" />
+            </circle>
+            <path d="M20 12L24 18L20 26L16 18L20 12Z" fill="url(#g3_signup)" />
+            <path d="M20 12L24 18L20 20L16 18L20 12Z" fill="#ffffff" opacity="0.5" />
+            <defs>
+              <linearGradient id="g1_signup" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#E6D2FF" />
+                <stop offset="1" stop-color="#9370DB" />
+              </linearGradient>
+              <linearGradient id="g2_signup" x1="36" y1="4" x2="4" y2="36" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#BA96FF" />
+                <stop offset="1" stop-color="#E6D2FF" />
+              </linearGradient>
+              <linearGradient id="g3_signup" x1="20" y1="12" x2="20" y2="26" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#FFFFFF" />
+                <stop offset="0.5" stop-color="#E6D2FF" />
+                <stop offset="1" stop-color="#9370DB" />
+              </linearGradient>
+            </defs>
+          </svg>
+          InsightFlow
+        </a>
+
+        <div class="left-text">
+          <h2>Build Something<br>Insightful <span class="fw-bold"></span></h2>
+        </div>
+      </div>
+
+      <!-- Right Side -->
+      <div class="split-right">
+        <div class="auth-head">
+          <h1>Create Account</h1>
+          <p class="muted">Enter your details to create an account</p>
+        </div>
+
+        <div id="authMsg" class="validation-message hidden"></div>
+
+        <form id="signupForm" class="form">
+          <label class="label">Username</label>
+          <input class="input" type="text" id="signupUsername" required placeholder="ishan_tiwari" />
+
+          <label class="label">Email</label>
+          <input class="input" type="email" id="signupEmail" required placeholder="aimerpaix@gmail.com" />
+
+          <label class="label">Password</label>
+          <input class="input" type="password" id="signupPassword" minlength="6" required placeholder="Min 6 chars" />
+
+          <button class="btn btn-yellow btn-block" type="submit">
+            Sign Up
+          </button>
+        </form>
+
+        <p class="bottom-link muted">Already a member? <a href="signin.html" class="highlight-link">Login</a></p>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+
+</html>
