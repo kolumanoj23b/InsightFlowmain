@@ -33,7 +33,7 @@
       }
     }
 
-    return 'http://localhost:6001';
+    return 'https://insightflowmain.onrender.com';
   }
   API_BASE = await detectApiBase();
   console.info('Detected API_BASE ->', API_BASE);

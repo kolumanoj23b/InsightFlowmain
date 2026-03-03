@@ -1,6 +1,6 @@
 (function () {
 
-  const API_BASE = "http://localhost:6001";
+  const API_BASE = "https://insightflowmain.onrender.com";
 
   console.log('Dashboard loading...');
   console.log('localStorage keys:', Object.keys(localStorage));
