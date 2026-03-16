@@ -53,14 +53,19 @@ exports.uploadDocument = async (req, res) => {
     }
     console.log('Document ID:', doc.id);
 
-    // Fire-and-forget ingestion (Mock/Async)
+    // Fire-and-forget ingestion
     console.log('Triggering ingestion at:', RAG_SERVICE_URL);
-    axios.post(`${RAG_SERVICE_URL}/v1/ingest`, {
-      document_id: doc.id,
-      project_id: projectId,
-      file_path: req.file.path
+    const FormData = require('form-data');
+    const form = new FormData();
+    form.append('user_id', req.user ? req.user.id : "anonymous");
+    form.append('project_id', projectId);
+    form.append('document_id', doc.id);
+    form.append('file', fs.createReadStream(req.file.path), req.file.originalname);
+
+    axios.post(`${RAG_SERVICE_URL}/v1/upload_ingest`, form, {
+      headers: { ...form.getHeaders() }
     }).catch(err => {
-      console.warn("RAG ingestion service unavailable (expected in mock):", err.message);
+      console.warn("RAG ingestion service unavailable:", err.message);
     });
 
     // Return structure expected by frontend
@@ -103,23 +108,6 @@ exports.chatWithDocument = async (req, res) => {
       return res.status(404).json({ error: "Document not found" });
     }
 
-    // 2. Read and Parse PDF file
-    console.log('--- Standalone RAG Mode ---');
-    console.log('Reading file:', doc.storagePath);
-
-    const absolutePath = path.isAbsolute(doc.storagePath)
-      ? doc.storagePath
-      : path.join(process.cwd(), doc.storagePath);
-
-    if (!fs.existsSync(absolutePath)) {
-      throw new Error(`File not found on server: ${absolutePath}`);
-    }
-
-    const buffer = fs.readFileSync(absolutePath);
-    const textContent = await pdfParser.extractPdfText(buffer);
-
-    console.log('✓ Text extracted, length:', textContent.length);
-
     // 3. Call RAG Service (/v1/query)
     console.log('Querying RAG Service at:', RAG_SERVICE_URL);
 
@@ -144,7 +132,27 @@ exports.chatWithDocument = async (req, res) => {
     } catch (ragErr) {
       console.warn('RAG Service query failed, falling back to standalone Gemini/Mock:', ragErr.message);
       // Fallback to Gemini via aiMock if FastAPI is down
-      chatResult = await aiMock.ragChat(textContent, message);
+      try {
+        console.log('--- Standalone RAG Mode Fallback ---');
+        console.log('Reading file:', doc.storagePath);
+
+        const absolutePath = path.isAbsolute(doc.storagePath)
+          ? doc.storagePath
+          : path.join(process.cwd(), doc.storagePath);
+
+        if (!fs.existsSync(absolutePath)) {
+          throw new Error(`File not found on server: ${absolutePath}`);
+        }
+
+        const buffer = fs.readFileSync(absolutePath);
+        const textContent = await pdfParser.extractPdfText(buffer);
+        console.log('✓ Text extracted, length:', textContent.length);
+
+        chatResult = await aiMock.ragChat(textContent, message);
+      } catch (fallbackErr) {
+        console.error("Fallback standalone RAG also failed:", fallbackErr.message);
+        throw new Error("RAG service unavailable and standalone mode failed: " + fallbackErr.message);
+      }
     }
 
     res.json({
@@ -201,6 +209,7 @@ exports.deleteDocument = async (req, res) => {
     });
 
     axios.post(`${RAG_SERVICE_URL}/v1/delete`, {
+      user_id: ownerId || "anonymous",
       document_id: documentId,
       project_id: projectId
     }).catch(() => { });

@@ -1,6 +1,8 @@
 (function () {
 
-  const API_BASE = "https://insightflowmain.onrender.com";
+  const API_BASE = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:")
+    ? "http://localhost:6001"
+    : "https://insightflowmain.onrender.com";
 
   console.log('Dashboard loading...');
   console.log('localStorage keys:', Object.keys(localStorage));
@@ -792,7 +794,7 @@
       console.log('✓ File:', file.name);
 
       console.log('Step 2: Checking file type...');
-      if (file.type !== "application/pdf") {
+      if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
         console.warn('Invalid file type:', file.type);
         showToast("error", "Please upload a valid PDF.");
         isUploading = false;
@@ -819,6 +821,13 @@
       console.log('✓ Fetch response received, status:', res.status);
 
       console.log('Step 5: Checking response status...');
+      if (res.status === 401) {
+        console.warn('Unauthorized token. Clearing session and redirecting...');
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "auth.html";
+        return;
+      }
       if (!res.ok) {
         console.error('Response not OK');
         const err = await res.json();
